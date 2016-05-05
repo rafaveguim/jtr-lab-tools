@@ -1,0 +1,22 @@
+#!/bin/sh
+# Summary: {Purpose, hypothesis, methods, materials, etc.}
+# Date: {YYYY-MM-DD}
+# Author: {John Doe}
+#
+# ASSUMPTIONS: {Any necessary external conditions (e.g., training data)}
+
+location=$(pwd) # the current directory
+target="" # path to target hashes
+wordlist="" # guess list
+john_dir="/opt/JohnTheRipper-bleeding-jumbo/run" # JohnTheRipper location
+john_conf="" # path to configuration file
+format="" # format of target hashes (e.g., Raw-SHA1-Linkedin)
+jtr_lab_tools="" # jtr-lab-tools folder
+
+"$john_dir/john" --wordlist=$wordlist --format=$format --pot=results.pot \
+  --config=$john_conf --external=AutoStatusAbort $target 2> "$location/results.log"
+
+total_count=$(cat $target | wc -l)
+
+# generate chart
+python "$jtr_lab_tools/chart_logs.py" -t $total_count -l 4 "$location/results.log"
